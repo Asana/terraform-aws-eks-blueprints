@@ -277,22 +277,22 @@ module "metrics_server" {
   addon_context     = local.addon_context
 }
 
-module "ondat" {
-  count             = var.enable_ondat ? 1 : 0
-  source            = "ondat/ondat-addon/eksblueprints"
-  version           = "0.1.1"
-  helm_config       = var.ondat_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-  irsa_policies     = var.ondat_irsa_policies
-  create_cluster    = var.ondat_create_cluster
-  etcd_endpoints    = var.ondat_etcd_endpoints
-  etcd_ca           = var.ondat_etcd_ca
-  etcd_cert         = var.ondat_etcd_cert
-  etcd_key          = var.ondat_etcd_key
-  admin_username    = var.ondat_admin_username
-  admin_password    = var.ondat_admin_password
-}
+#module "ondat" {
+#  count             = var.enable_ondat ? 1 : 0
+#  source            = "ondat/ondat-addon/eksblueprints"
+#  version           = "0.1.1"
+#  helm_config       = var.ondat_helm_config
+#  manage_via_gitops = var.argocd_manage_add_ons
+#  addon_context     = local.addon_context
+#  irsa_policies     = var.ondat_irsa_policies
+#  create_cluster    = var.ondat_create_cluster
+#  etcd_endpoints    = var.ondat_etcd_endpoints
+#  etcd_ca           = var.ondat_etcd_ca
+#  etcd_cert         = var.ondat_etcd_cert
+#  etcd_key          = var.ondat_etcd_key
+#  admin_username    = var.ondat_admin_username
+#  admin_password    = var.ondat_admin_password
+#}
 
 module "kube_prometheus_stack" {
   count         = var.enable_kube_prometheus_stack ? 1 : 0
@@ -338,23 +338,23 @@ module "spark_k8s_operator" {
   addon_context     = local.addon_context
 }
 
-module "tetrate_istio" {
-  count                = var.enable_tetrate_istio ? 1 : 0
-  source               = "tetratelabs/tetrate-istio-addon/eksblueprints"
-  version              = "0.0.7"
-  distribution         = var.tetrate_istio_distribution
-  distribution_version = var.tetrate_istio_version
-  install_base         = var.tetrate_istio_install_base
-  install_cni          = var.tetrate_istio_install_cni
-  install_istiod       = var.tetrate_istio_install_istiod
-  install_gateway      = var.tetrate_istio_install_gateway
-  base_helm_config     = var.tetrate_istio_base_helm_config
-  cni_helm_config      = var.tetrate_istio_cni_helm_config
-  istiod_helm_config   = var.tetrate_istio_istiod_helm_config
-  gateway_helm_config  = var.tetrate_istio_gateway_helm_config
-  manage_via_gitops    = var.argocd_manage_add_ons
-  addon_context        = local.addon_context
-}
+#module "tetrate_istio" {
+#  count                = var.enable_tetrate_istio ? 1 : 0
+#  source               = "tetratelabs/tetrate-istio-addon/eksblueprints"
+#  version              = "0.0.7"
+#  distribution         = var.tetrate_istio_distribution
+#  distribution_version = var.tetrate_istio_version
+#  install_base         = var.tetrate_istio_install_base
+#  install_cni          = var.tetrate_istio_install_cni
+#  install_istiod       = var.tetrate_istio_install_istiod
+#  install_gateway      = var.tetrate_istio_install_gateway
+#  base_helm_config     = var.tetrate_istio_base_helm_config
+#  cni_helm_config      = var.tetrate_istio_cni_helm_config
+#  istiod_helm_config   = var.tetrate_istio_istiod_helm_config
+#  gateway_helm_config  = var.tetrate_istio_gateway_helm_config
+#  manage_via_gitops    = var.argocd_manage_add_ons
+#  addon_context        = local.addon_context
+#}
 
 module "traefik" {
   count             = var.enable_traefik ? 1 : 0
@@ -364,17 +364,17 @@ module "traefik" {
   addon_context     = local.addon_context
 }
 
-module "vault" {
-  count = var.enable_vault ? 1 : 0
-
-  # See https://registry.terraform.io/modules/hashicorp/hashicorp-vault-eks-addon/aws/
-  source  = "hashicorp/hashicorp-vault-eks-addon/aws"
-  version = "0.9.0"
-
-  helm_config       = var.vault_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
+#module "vault" {
+#  count = var.enable_vault ? 1 : 0
+#
+#  # See https://registry.terraform.io/modules/hashicorp/hashicorp-vault-eks-addon/aws/
+#  source  = "hashicorp/hashicorp-vault-eks-addon/aws"
+#  version = "0.9.0"
+#
+#  helm_config       = var.vault_helm_config
+#  manage_via_gitops = var.argocd_manage_add_ons
+#  addon_context     = local.addon_context
+#}
 
 module "vpa" {
   count             = var.enable_vpa ? 1 : 0
