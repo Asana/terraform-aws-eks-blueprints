@@ -34,10 +34,6 @@ variable "addon_context" {
 
 variable "addon_config" {
   description = "cluster-autoscaler configuration"
-  type = object({
-    aws_iam_policy_arn = string
-  })
-  default     = {
-    aws_iam_policy_arn = ""
-  }
+  type    = map(string)
+  default = {}
 }
