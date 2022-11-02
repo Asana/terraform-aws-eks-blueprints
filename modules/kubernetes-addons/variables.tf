@@ -180,6 +180,12 @@ variable "cluster_autoscaler_helm_config" {
   default     = {}
 }
 
+variable "cluster_autoscaler_config" {
+  description = "Cluster Autoscaler add-on config"
+  type        = any
+  default     = {}
+}
+
 #-----------COREDNS AUTOSCALER-------------
 variable "enable_coredns_autoscaler" {
   description = "Enable CoreDNS autoscaler add-on"

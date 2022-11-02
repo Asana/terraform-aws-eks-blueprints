@@ -2,6 +2,7 @@ locals {
   name            = try(var.helm_config.name, "cluster-autoscaler")
   namespace       = try(var.helm_config.namespace, "kube-system")
   service_account = "${local.name}-sa"
+  aws_iam_policy_arn = try(var.addon_config.aws_iam_policy_arn, aws_iam_policy.cluster_autoscaler[0].arn)
 }
 
 module "helm_addon" {
@@ -42,7 +43,7 @@ module "helm_addon" {
     kubernetes_namespace              = local.namespace
     create_kubernetes_service_account = true
     kubernetes_service_account        = local.service_account
-    irsa_iam_policies                 = [aws_iam_policy.cluster_autoscaler.arn]
+    irsa_iam_policies                 = [local.aws_iam_policy_arn]
   }
 
   addon_context = var.addon_context
@@ -85,6 +86,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
+  count = var.addon_config.aws_iam_policy_arn == "" ? 1 : 0
   name        = "${var.addon_context.eks_cluster_id}-${local.name}-irsa"
   description = "Cluster Autoscaler IAM policy"
   policy      = data.aws_iam_policy_document.cluster_autoscaler.json

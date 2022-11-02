@@ -31,3 +31,13 @@ variable "addon_context" {
     irsa_iam_permissions_boundary  = string
   })
 }
+
+variable "addon_config" {
+  description = "cluster-autoscaler configuration"
+  type = object({
+    aws_iam_policy_arn = string
+  })
+  default     = {
+    aws_iam_policy_arn = ""
+  }
+}
