@@ -43,7 +43,7 @@ module "eks_blueprints" {
   source = "../.."
 
   cluster_name    = local.name
-  cluster_version = "1.23"
+  cluster_version = "1.24"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnets
@@ -208,6 +208,10 @@ resource "kubernetes_storage_class_v1" "gp3" {
     fsType    = "ext4"
     type      = "gp3"
   }
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
 }
 
 resource "kubernetes_storage_class_v1" "efs" {
@@ -221,4 +225,12 @@ resource "kubernetes_storage_class_v1" "efs" {
     fileSystemId     = module.efs.id
     directoryPerms   = "700"
   }
+
+  mount_options = [
+    "iam"
+  ]
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
 }
