@@ -38,7 +38,7 @@ locals {
     kubernetes_service_account        = local.service_account_name
     create_kubernetes_namespace       = try(local.helm_config["create_namespace"], true)
     create_kubernetes_service_account = true
-    irsa_iam_policies                 = concat([aws_iam_policy.karpenter[0].arn], var.irsa_policies)
+    irsa_iam_policies                 = concat([local.aws_iam_policy_arn], var.irsa_policies)
   }
 
   argocd_gitops_config = {
