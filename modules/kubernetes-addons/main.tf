@@ -319,6 +319,7 @@ module "karpenter" {
   node_iam_instance_profile = var.karpenter_node_iam_instance_profile
   manage_via_gitops         = var.argocd_manage_add_ons
   addon_context             = local.addon_context
+  addon_config              = var.karpenter_config
 }
 
 module "keda" {

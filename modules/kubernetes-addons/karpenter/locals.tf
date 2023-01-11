@@ -1,6 +1,7 @@
 locals {
   name                 = "karpenter"
   service_account_name = "karpenter"
+  aws_iam_policy_arn = try(var.addon_config["aws_iam_policy_arn"], aws_iam_policy.karpenter[0].arn)
   set_values = [{
     name  = "serviceAccount.name"
     value = local.service_account_name

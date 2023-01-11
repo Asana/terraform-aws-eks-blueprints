@@ -38,3 +38,9 @@ variable "addon_context" {
     irsa_iam_permissions_boundary  = string
   })
 }
+
+variable "addon_config" {
+  description = "karpenter configuration"
+  type    = map(string)
+  default = {}
+}

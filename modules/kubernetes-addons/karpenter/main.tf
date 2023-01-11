@@ -8,6 +8,7 @@ module "helm_addon" {
 }
 
 resource "aws_iam_policy" "karpenter" {
+  count       = try(var.addon_config["aws_iam_policy_arn"], "") == "" ? 1 : 0
   name        = "${var.addon_context.eks_cluster_id}-karpenter"
   description = "IAM Policy for Karpenter"
   policy      = data.aws_iam_policy_document.karpenter.json
