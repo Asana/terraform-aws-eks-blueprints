@@ -52,9 +52,9 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.23`)"
+  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`)"
   type        = string
-  default     = "1.23"
+  default     = "1.24"
 }
 
 #-------------------------------
@@ -64,6 +64,24 @@ variable "create_cluster_security_group" {
   description = "Toggle to create or assign cluster security group"
   type        = bool
   default     = true
+}
+
+variable "cluster_security_group_name" {
+  description = "Name to use on cluster security group created"
+  type        = string
+  default     = null
+}
+
+variable "cluster_security_group_use_name_prefix" {
+  description = "Determines whether cluster security group name (`cluster_security_group_name`) is used as a prefix"
+  type        = bool
+  default     = true
+}
+
+variable "cluster_security_group_description" {
+  description = "Description of the cluster security group created"
+  type        = string
+  default     = "EKS cluster security group"
 }
 
 variable "cluster_security_group_id" {
@@ -130,6 +148,12 @@ variable "cluster_kms_key_additional_admin_arns" {
   description = "A list of additional IAM ARNs that should have FULL access (kms:*) in the KMS key policy"
   type        = list(string)
   default     = []
+}
+
+variable "enable_cluster_encryption" {
+  description = "Determines whether cluster encryption is enabled"
+  type        = bool
+  default     = true
 }
 
 variable "cluster_encryption_config" {
@@ -217,6 +241,12 @@ variable "iam_role_path" {
   default     = null
 }
 
+variable "iam_role_description" {
+  description = "Description of the role"
+  type        = string
+  default     = null
+}
+
 variable "iam_role_permissions_boundary" {
   description = "ARN of the policy that is used to set the permissions boundary for the IAM role"
   type        = string
@@ -281,6 +311,24 @@ variable "create_node_security_group" {
   description = "Determines whether to create a security group for the node groups or use the existing `node_security_group_id`"
   type        = bool
   default     = true
+}
+
+variable "node_security_group_name" {
+  description = "Name to use on node security group created"
+  type        = string
+  default     = null
+}
+
+variable "node_security_group_use_name_prefix" {
+  description = "Determines whether node security group name (`node_security_group_name`) is used as a prefix"
+  type        = bool
+  default     = true
+}
+
+variable "node_security_group_description" {
+  description = "Description of the node security group created"
+  type        = string
+  default     = "EKS node shared security group"
 }
 
 variable "node_security_group_additional_rules" {

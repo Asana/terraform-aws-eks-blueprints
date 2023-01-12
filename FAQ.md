@@ -29,7 +29,7 @@ There are two options here:
 
 ## Provider Authentication
 
-The chain of events when provisioning an example is typically in the stages of VPC -> EKS cluster -> addons and manifests. Per Terraform's recommendation, it is not recommended to pass an unknown value into provider configurations. However, for the sake of simplicity and ease of use, Blueprints does specify the AWS provider along with the Kubernetes, Helm, and Kubectl providers in order to show the full configuration requred for provisioning example. Note - this is the configuration *required* to provision the example, not necessarily the shape of how the configuration should be structured; users are encouraged to split up EKS cluster creation from addon and manifest provisioning to align with Terraform's recommendations.
+The chain of events when provisioning an example is typically in the stages of VPC -> EKS cluster -> addons and manifests. Per Terraform's recommendation, it is not recommended to pass an unknown value into provider configurations. However, for the sake of simplicity and ease of use, Blueprints does specify the AWS provider along with the Kubernetes, Helm, and Kubectl providers in order to show the full configuration required for provisioning example. Note - this is the configuration *required* to provision the example, not necessarily the shape of how the configuration should be structured; users are encouraged to split up EKS cluster creation from addon and manifest provisioning to align with Terraform's recommendations.
 
 With that said, the examples here are combining the providers and users can sometimes encounter various issues with the provider authentication methods. There are primarily two methods for authenticating the Kubernetes, Helm, and Kubectl providers to the EKS cluster created:
 
@@ -39,9 +39,9 @@ With that said, the examples here are combining the providers and users can some
 The Kubernetes and Helm providers [recommend the `exec()` method](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs#exec-plugins), however this has the caveat that it requires the awscli to be installed on the machine running Terraform *AND* of at least a minimum version to support the API spec used by the provider (i.e. - `"client.authentication.k8s.io/v1alpha1"`, `"client.authentication.k8s.io/v1beta1"`, etc.). Selecting the appropriate provider authentication method is left up to users, and the examples used in this project will default to using the static token method for ease of use.
 
 Users of the static token method should be aware that if they receive a `401 Unauthorized` message, they might have a token that has expired and will need to run `terraform refresh` to get a new token.
-Users of the `exec()` method should be aware that the `exec()` method is reliant on the awscli and the associated authtentication API version; the awscli version may need to be updated to support a later API version required by the Kubernetes version in use.
+Users of the `exec()` method should be aware that the `exec()` method is reliant on the awscli and the associated authentication API version; the awscli version may need to be updated to support a later API version required by the Kubernetes version in use.
 
-The following examples demonstrate either method that users can utilize - please refer to the associated provider's documentation for further details on cofiguration.
+The following examples demonstrate either method that users can utilize - please refer to the associated provider's documentation for further details on configuration.
 
 ### Static Token Example
 
@@ -147,4 +147,35 @@ Enable the following add-on in EKS Cluster v1.22 and then upgrade to v1.23 to av
 
 ```hcl
   enable_amazon_eks_aws_ebs_csi_driver = true
+```
+
+## Unable to destroy namespace created by Terraform
+
+In some cases, when you try to run terraform destroy on kubernetes resources created by Terraform such as namespace, you may end up seeing failures such as timeout and context deadline exceeded failures.
+Namespace one of those resources we've seen before, the main reason this happens is because orphaned resources created through CRDs of addons (such as ArgoCD, AWS LBC and more) are left behind after the addons are being deleted, this is case by case scenario.
+For example, with namespaces:
+
+1. Confirm the namespace is hanging in status `Terminating`
+
+```sh
+kubectl get namespaces
+```
+
+2. Check for any orphaned resources in the namespace, make sure to replace <namespace_name> with your namespace:
+
+```sh
+kubectl api-resources --verbs=list --namespaced -o name   | xargs -n 1 kubectl get  \
+--show-kind --ignore-not-found -n <namespace_name>
+```
+
+3. For any of the above output, patch the resource finalize:
+
+```sh
+kubectl patch RESOURCE NAME -p '{"metadata":{"finalizers":[]}}' --type=merge
+```
+
+4. Check the status of the namespace, if needed you may need to patch the namespace finalizers as-well
+
+```sh
+kubectl patch ns <ns-name> -p '{"spec":{"finalizers":null}}'
 ```

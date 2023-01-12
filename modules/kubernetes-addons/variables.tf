@@ -51,6 +51,12 @@ variable "eks_oidc_provider" {
   default     = null
 }
 
+variable "eks_oidc_provider_arn" {
+  description = "The OpenID Connect identity provider ARN"
+  type        = string
+  default     = null
+}
+
 variable "eks_cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
   type        = string
@@ -233,15 +239,9 @@ variable "crossplane_helm_config" {
 
 variable "crossplane_aws_provider" {
   description = "AWS Provider config for Crossplane"
-  type = object({
-    enable                   = bool
-    provider_aws_version     = string
-    additional_irsa_policies = list(string)
-  })
+  type        = any
   default = {
-    enable                   = false
-    provider_aws_version     = "v0.24.1"
-    additional_irsa_policies = []
+    enable = false
   }
 }
 
@@ -256,6 +256,14 @@ variable "crossplane_jet_aws_provider" {
     enable                   = false
     provider_aws_version     = "v0.24.1"
     additional_irsa_policies = []
+  }
+}
+
+variable "crossplane_kubernetes_provider" {
+  description = "Kubernetes Provider config for Crossplane"
+  type        = any
+  default = {
+    enable = false
   }
 }
 
@@ -489,6 +497,25 @@ variable "tetrate_istio_gateway_helm_config" {
   description = "Istio `gateway` Helm Chart config"
   type        = any
   default     = {}
+}
+
+#-----------THANOS-------------
+variable "enable_thanos" {
+  description = "Enable Thanos add-on"
+  type        = bool
+  default     = false
+}
+
+variable "thanos_helm_config" {
+  description = "Thanos Helm Chart config"
+  type        = any
+  default     = {}
+}
+
+variable "thanos_irsa_policies" {
+  description = "Additional IAM policies for a IAM role for service accounts"
+  type        = list(string)
+  default     = []
 }
 
 #-----------TRAEFIK-------------
@@ -855,6 +882,18 @@ variable "karpenter_node_iam_instance_profile" {
   default     = ""
 }
 
+variable "karpenter_enable_spot_termination_handling" {
+  description = "Determines whether to enable native spot termination handling"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_sqs_queue_arn" {
+  description = "(Optional) ARN of SQS used by Karpenter when native node termination handling is enabled"
+  type        = string
+  default     = ""
+}
+
 #-----------KEDA ADDON-------------
 variable "enable_keda" {
   description = "Enable KEDA Event-based autoscaler add-on"
@@ -1164,6 +1203,19 @@ variable "airflow_helm_config" {
   default     = {}
 }
 
+#-----Apache Kafka Strimzi Operator------
+variable "enable_strimzi_kafka_operator" {
+  description = "Enable Kafka add-on"
+  type        = bool
+  default     = false
+}
+
+variable "strimzi_kafka_operator_helm_config" {
+  description = "Kafka Strimzi Helm Chart config"
+  type        = any
+  default     = {}
+}
+
 #-----------Datadog Operator-------------
 variable "enable_datadog_operator" {
   description = "Enable Datadog Operator add-on"
@@ -1295,6 +1347,12 @@ variable "cilium_helm_config" {
 
 }
 
+variable "cilium_enable_wireguard" {
+  description = "Enable wireguard encryption"
+  type        = bool
+  default     = false
+}
+
 #-----------Gatekeeper ADDON-------------
 variable "enable_gatekeeper" {
   description = "Enable Gatekeeper add-on"
@@ -1352,4 +1410,30 @@ variable "enable_app_2048" {
   description = "Enable sample app 2048"
   type        = bool
   default     = false
+}
+
+#----------- EMR on EKS -----------------------
+variable "enable_emr_on_eks" {
+  description = "Enable EMR on EKS add-on"
+  type        = bool
+  default     = false
+}
+
+variable "emr_on_eks_config" {
+  description = "EMR on EKS Helm configuration values"
+  type        = any
+  default     = {}
+}
+
+#-----------Consul addon-----------------------
+variable "enable_consul" {
+  description = "Enable consul add-on"
+  type        = bool
+  default     = false
+}
+
+variable "consul_helm_config" {
+  description = "Consul Helm Chart config"
+  type        = any
+  default     = {}
 }
