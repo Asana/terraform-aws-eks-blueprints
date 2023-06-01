@@ -1,8 +1,9 @@
 locals {
   name = "aws-ebs-csi-driver"
 
-  create_irsa = try(var.addon_config.service_account_role_arn == "", true)
-  namespace   = try(var.helm_config.namespace, "kube-system")
+  create_irsa     = try(var.addon_config.service_account_role_arn == "", true)
+  namespace       = try(var.helm_config.namespace, "kube-system")
+  service_account = try(var.helm_config.service_account, "ebs-csi-controller-sa")
 }
 
 data "aws_eks_addon_version" "this" {
@@ -20,6 +21,7 @@ resource "aws_eks_addon" "aws_ebs_csi_driver" {
   resolve_conflicts        = try(var.addon_config.resolve_conflicts, "OVERWRITE")
   service_account_role_arn = local.create_irsa ? module.irsa_addon[0].irsa_iam_role_arn : try(var.addon_config.service_account_role_arn, null)
   preserve                 = try(var.addon_config.preserve, true)
+  configuration_values     = try(var.addon_config.configuration_values, null)
 
   tags = merge(
     var.addon_context.tags,
@@ -60,11 +62,12 @@ module "helm_addon" {
   ]
 
   irsa_config = {
-    create_kubernetes_namespace       = try(var.helm_config.create_namespace, false)
-    kubernetes_namespace              = local.namespace
-    create_kubernetes_service_account = true
-    kubernetes_service_account        = "ebs-csi-controller-sa"
-    irsa_iam_policies                 = concat([aws_iam_policy.aws_ebs_csi_driver[0].arn], try(var.helm_config.additional_iam_policies, []))
+    create_kubernetes_namespace         = try(var.helm_config.create_namespace, false)
+    kubernetes_namespace                = local.namespace
+    create_kubernetes_service_account   = true
+    create_service_account_secret_token = try(var.helm_config["create_service_account_secret_token"], false)
+    kubernetes_service_account          = local.service_account
+    irsa_iam_policies                   = concat([aws_iam_policy.aws_ebs_csi_driver[0].arn], lookup(var.helm_config, "additional_iam_policies", []))
   }
 
   # Blueprints
@@ -79,8 +82,8 @@ module "irsa_addon" {
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_namespace              = local.namespace
-  kubernetes_service_account        = "ebs-csi-controller-sa"
-  irsa_iam_policies                 = concat([aws_iam_policy.aws_ebs_csi_driver[0].arn], try(var.addon_config.additional_iam_policies, []))
+  kubernetes_service_account        = local.service_account
+  irsa_iam_policies                 = concat([aws_iam_policy.aws_ebs_csi_driver[0].arn], lookup(var.addon_config, "additional_iam_policies", []))
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
   eks_cluster_id                    = var.addon_context.eks_cluster_id

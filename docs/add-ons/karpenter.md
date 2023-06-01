@@ -2,7 +2,7 @@
 
 Karpenter is an open-source node provisioning project built for Kubernetes. Karpenter automatically launches just the right compute resources to handle your cluster's applications. It is designed to let you take full advantage of the cloud with fast and simple compute provisioning for Kubernetes clusters.
 
-For complete project documentation, please visit the [Karpenter](https://karpenter.sh/docs/getting-started/).
+For complete project documentation, please visit the [Karpenter documentation](https://karpenter.sh/docs/getting-started/).
 
 ## Usage
 
@@ -16,17 +16,21 @@ You can optionally customize the Helm chart that deploys `Karpenter` via the fol
 
 ```hcl
   enable_karpenter = true
+  # Queue optional for native handling of instance termination events
+  karpenter_sqs_queue_arn = "arn:aws:sqs:us-west-2:444455556666:queue1"
+  # Optional to add name prefix for Karpenter's event bridge rules
+  karpenter_event_rule_name_prefix = "Karpenter"
   # Optional  karpenter_helm_config
   karpenter_helm_config = {
     name                       = "karpenter"
     chart                      = "karpenter"
     repository                 = "https://charts.karpenter.sh"
-    version                    = "0.6.3"
+    version                    = "0.19.3"
     namespace                  = "karpenter"
     values = [templatefile("${path.module}/values.yaml", {
          eks_cluster_id       = var.eks_cluster_id,
          eks_cluster_endpoint = var.eks_cluster_endpoint,
-         service_account_name = var.service_account_name,
+         service_account      = var.service_account,
          operating_system     = "linux"
     })]
   }
@@ -42,7 +46,7 @@ Refer to [locals.tf](https://github.com/aws-ia/terraform-aws-eks-blueprints/blob
 ```hcl
   argocd_gitops_config = {
     enable                    = true
-    serviceAccountName        = local.service_account_name
+    serviceAccountName        = local.service_account
     controllerClusterName     = var.eks_cluster_id
     controllerClusterEndpoint = local.eks_cluster_endpoint
     awsDefaultInstanceProfile = var.node_iam_instance_profile

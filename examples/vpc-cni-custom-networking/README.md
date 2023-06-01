@@ -1,14 +1,19 @@
 # EKS Cluster w/ VPC-CNI Custom Networking
 
 This example shows how to provision an EKS cluster with:
+
 - AWS VPC-CNI custom networking to assign IPs to pods from subnets outside of those used by the nodes
-- AWS VPC-CNI prefix delegation to allow higher pod densities - this is useful since the custom networking removes one ENI from use for pod IP assignment which lowers the number of pods that can be assigned to the node. Enabling prefix delegation allows for prefixes to be assigned to the ENIs to ensure the node resources can be fully utilized through higher pod densitities. See the user data section below for managing the max pods assigned to the node.
+- AWS VPC-CNI prefix delegation to allow higher pod densities - this is useful since the custom networking removes one ENI from use for pod IP assignment which lowers the number of pods that can be assigned to the node. Enabling prefix delegation allows for prefixes to be assigned to the ENIs to ensure the node resources can be fully utilized through higher pod densities. See the user data section below for managing the max pods assigned to the node.
 - Dedicated /28 subnets for the EKS cluster control plane. Making changes to the subnets used by the control plane is a destructive operation - it is recommended to use dedicated subnets for the control plane that are separate from the data plane to allow for future growth through the addition of subnets without disruption to the cluster.
 
-To disable prefix delegation from this example:
+To disable prefix delegation from this example remove the environment environment variables `ENABLE_PREFIX_DELEGATION=true` and `WARM_PREFIX_TARGET=1` assignment from the `vpc-cni` addon
 
-1. Remove the `--cni-prefix-delegation-enabled` flag from the user data script
-2. Remove the environment environment variables `ENABLE_PREFIX_DELEGATION=true` and `WARM_PREFIX_TARGET=1` assignment from the `aws-node` daemonset (set in the `null_resource.kubectl_set_env` resource in this example)
+## VPC CNI Configuration
+
+In this example, the `vpc-cni` addon is configured using `before_compute = true`. This is done to ensure the `vpc-cni` is created and updated *before* any EC2 instances are created so that the desired settings have applied before they will be referenced. With this configuration, you will now see that nodes created will have `--max-pods 110` configured do to the use of prefix delegation being enabled on the `vpc-cni`.
+
+If you find that your nodes are not being created with the correct number of max pods (i.e. - for `m5.large`, if you are seeing a max pods of 29 instead of 110), most likely the `vpc-cni` was not configured *before* the EC2 instances.
+
 
 ## Reference Documentation:
 
@@ -129,6 +134,6 @@ To teardown and remove the resources created in this example:
 
 ```sh
 terraform destroy -target=kubectl_manifest.eni_config -target=module.eks_blueprints_kubernetes_addons -auto-approve
-terraform destroy -target=module.eks_blueprints -auto-approve
+terraform destroy -target=module.eks -auto-approve
 terraform destroy -auto-approve
 ```

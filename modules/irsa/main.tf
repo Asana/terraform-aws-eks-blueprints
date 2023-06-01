@@ -11,6 +11,27 @@ resource "kubernetes_namespace_v1" "irsa" {
   timeouts {
     delete = "15m"
   }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+      metadata[0].annotations,
+    ]
+  }
+}
+
+resource "kubernetes_secret_v1" "irsa" {
+  count = var.create_kubernetes_service_account && var.create_service_account_secret_token ? 1 : 0
+  metadata {
+    name      = format("%s-token-secret", try(kubernetes_service_account_v1.irsa[0].metadata[0].name, var.kubernetes_service_account))
+    namespace = try(kubernetes_namespace_v1.irsa[0].metadata[0].name, var.kubernetes_namespace)
+    annotations = {
+      "kubernetes.io/service-account.name"      = try(kubernetes_service_account_v1.irsa[0].metadata[0].name, var.kubernetes_service_account)
+      "kubernetes.io/service-account.namespace" = try(kubernetes_namespace_v1.irsa[0].metadata[0].name, var.kubernetes_namespace)
+    }
+  }
+
+  type = "kubernetes.io/service-account-token"
 }
 
 resource "kubernetes_service_account_v1" "irsa" {

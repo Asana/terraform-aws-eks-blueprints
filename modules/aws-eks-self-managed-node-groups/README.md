@@ -6,8 +6,6 @@ Amazon EKS Self Managed Node Groups lets you create, update, scale, and terminat
 
 This module allows you to create on-demand or spot self managed Linux or Windows nodegroups. You can instantiate the module once with map of node group values to create multiple self managed node groups. By default, the module uses the latest available version of Amazon-provided EKS-optimized AMIs for Amazon Linux 2, Bottlerocket, or Windows 2019 Server Core operating systems. You can override the image via the custom_ami_id input variable.
 
-Checkout the usage docs for Self-managed Node groups [examples](https://aws-ia.github.io/terraform-aws-eks-blueprints/latest/node-groups/)
-
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -58,7 +56,7 @@ Checkout the usage docs for Self-managed Node groups [examples](https://aws-ia.g
 | <a name="output_launch_template_latest_versions"></a> [launch\_template\_latest\_versions](#output\_launch\_template\_latest\_versions) | Launch Template latest versions for EKS Self Managed Node Group |
 | <a name="output_self_managed_asg_names"></a> [self\_managed\_asg\_names](#output\_self\_managed\_asg\_names) | Self managed group ASG names |
 | <a name="output_self_managed_iam_role_name"></a> [self\_managed\_iam\_role\_name](#output\_self\_managed\_iam\_role\_name) | Self managed groups IAM role names |
-| <a name="output_self_managed_nodegroup_iam_instance_profile_arn"></a> [self\_managed\_nodegroup\_iam\_instance\_profile\_arn](#output\_self\_managed\_nodegroup\_iam\_instance\_profile\_arn) | IAM Instance Profile arnd for EKS Self Managed Node Group |
+| <a name="output_self_managed_nodegroup_iam_instance_profile_arn"></a> [self\_managed\_nodegroup\_iam\_instance\_profile\_arn](#output\_self\_managed\_nodegroup\_iam\_instance\_profile\_arn) | IAM Instance Profile and for EKS Self Managed Node Group |
 | <a name="output_self_managed_nodegroup_iam_instance_profile_id"></a> [self\_managed\_nodegroup\_iam\_instance\_profile\_id](#output\_self\_managed\_nodegroup\_iam\_instance\_profile\_id) | IAM Instance Profile ID for EKS Self Managed Node Group |
 | <a name="output_self_managed_nodegroup_iam_role_arns"></a> [self\_managed\_nodegroup\_iam\_role\_arns](#output\_self\_managed\_nodegroup\_iam\_role\_arns) | Self managed groups IAM role arns |
 | <a name="output_self_managed_nodegroup_name"></a> [self\_managed\_nodegroup\_name](#output\_self\_managed\_nodegroup\_name) | EKS Self Managed node group id |

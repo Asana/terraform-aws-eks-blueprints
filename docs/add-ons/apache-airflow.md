@@ -1,7 +1,7 @@
 # Apache Airflow add-on
 
 This document describes the details of the best practices for building and deploying Self-managed **Highly Scalable Apache Airflow cluster on Kubernetes(Amazon EKS) Cluster**.
-Alternatively, Amazon also provides a fully managed Apache Airflow service(MWAA). Please see this [example]( https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/managed-workflow-apache-airflow) if you are looking to build Amazon MWAA.
+Alternatively, Amazon also provides a fully managed Apache Airflow service(MWAA).
 
 Apache Airflow is used for the scheduling and orchestration of data pipelines or workflows.
 Orchestration of data pipelines refers to the sequencing, coordination, scheduling, and managing complex data pipelines from diverse sources.
@@ -60,18 +60,15 @@ This deployment example uses internet facing Load Balancer to easily access the 
 You can modify the `values.yaml` to set the Load Balancer to `internal` and upload certificate to use HTTPS.
 Ensure access to the WebUI using internal domain and network.
 
-
-Checkout the [examples](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/analytics/airflow-on-eks) of deploying and using Apache Airflow on Amazon EKS.
-
 ## Usage
 
-The [Apache Airflow](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/analytics/airflow-on-eks) can be deployed by enabling the add-on via the following.
+The Apache Airflow can be deployed by enabling the add-on via the following.
 
 ```hcl
   enable_airflow = true
 ```
 
-For production workloads, you can use this [example](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/analytics/airflow-on-eks) with custom Helm Config.
+For production workloads, you can use the following custom Helm Config.
 
 ```hcl
     enable_airflow = true
@@ -116,5 +113,4 @@ airflow-scheduler   2/2     2            2           77m
 airflow-statsd      1/1     1            1           77m
 airflow-triggerer   1/1     1            1           77m
 airflow-webserver   2/2     2            2           77m
-
 ```

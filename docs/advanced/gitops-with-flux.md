@@ -1,6 +1,6 @@
 # Manage your cluster(s) configuration with Flux
 
-Once you have deployed your EKS cluster(s) with Terraform, you can leverage [Flux](https://fluxcd.io) to manage your cluster's configuration with [GitOps](https://www.gitops.tech/), including the deployment of add-ons, cluster configuration (e.g. cluster policies) and applications. Using GitOps practices to manage your clusters configuration will simplfy management, scaling the number of clusters you run and be able to easily recreate your clusters, treating them as ephemeral resources. Recreating your cluster is as simple as deploying a new cluster with Terraform and bootstraping it with Flux pointing to the repository containing the configuration.
+Once you have deployed your EKS cluster(s) with Terraform, you can leverage [Flux](https://fluxcd.io) to manage your cluster's configuration with [GitOps](https://www.gitops.tech/), including the deployment of add-ons, cluster configuration (e.g. cluster policies) and applications. Using GitOps practices to manage your clusters configuration will simplify management, scaling the number of clusters you run and be able to easily recreate your clusters, treating them as ephemeral resources. Recreating your cluster is as simple as deploying a new cluster with Terraform and bootstrapping it with Flux pointing to the repository containing the configuration.
 
 The [aws-samples/flux-eks-gitops-config](https://github.com/aws-samples/flux-eks-gitops-config) repository provides a sample configuration blueprint for configuring multiple Amazon EKS clusters belonging to different stages (`test` and `production`) using [GitOps](https://www.gitops.tech/) with [Flux v2](https://fluxcd.io/docs/). This repository installs a set of commonly used Kubernetes add-ons to perform policy enforcement, restrict network traffic with network policies, cluster monitoring, extend Kubernetes deployment capabilities enabling progressive Canary deployments for your applications...
 
@@ -9,7 +9,7 @@ You can use the above sample repository to experiment with the predefined cluste
 This sample installs the following Kubernetes add-ons:
 
 * **[metrics-server](https://github.com/kubernetes-sigs/metrics-server):** Aggregator of resource usage data in your cluster, commonly used by other Kubernetes add ons, such us [Horizontal Pod Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/horizontal-pod-autoscaler.html) or [Kubernetes Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html).
-* **[Calico](https://projectcalico.docs.tigera.io/about/about-calico):** Project Calico is a network policy engine for Kubernetes. Calico network policy enforcement allows you to implement network segmentation and tenant isolation. For more information check the [Amazon EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/calico.html).
+* **[Calico](https://docs.tigera.io/calico/next/about/):** Project Calico is a network policy engine for Kubernetes. Calico network policy enforcement allows you to implement network segmentation and tenant isolation. For more information check the [Amazon EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/calico.html).
 * **[Kyverno](https://kyverno.io/):** Kubernetes Policy Management Engine. Kyverno allows cluster administrators to manage environment specific configurations independently of workload configurations and enforce configuration best practices for their clusters. Kyverno can be used to scan existing workloads for best practices, or can be used to enforce best practices by blocking or mutating API requests.
 * **[Prometheus](https://prometheus.io/):** Defacto standard open-source systems monitoring and alerting toolkit for Kubernetes. This repository installs [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack).
 * **[Flagger](https://flagger.app/):** Progressive delivery operator for Flux. Flagger can run automated application analysis, testing, promotion and rollback for the following deployment strategies: Canary, A/B Testing and Blue/Green. For more details, check the [Flagger documentation](https://docs.flagger.app/).
@@ -21,7 +21,7 @@ There're also a set of Kyverno cluster policies deployed to audit (test) or enfo
 
 ## Bootstrap your cluster with Flux
 
-The below instructions assume you have created a cluster with `eks-blueprints` with no add-ons other than aws-load-balancer-controller. If you're installing additonal add-ons via terraform, the configuration may clash with the one on the sample repository. If you plan to leverage Flux, we recommend that you use Terraform to install and manage only add-ons that require additional AWS resources to be created (like IAM roles for Service accounts), and then use Flux to manage the rest.
+The below instructions assume you have created a cluster with `eks-blueprints` with no add-ons other than aws-load-balancer-controller. If you're installing additional add-ons via terraform, the configuration may clash with the one on the sample repository. If you plan to leverage Flux, we recommend that you use Terraform to install and manage only add-ons that require additional AWS resources to be created (like IAM roles for Service accounts), and then use Flux to manage the rest.
 
 ### Prerequisites
 
@@ -52,7 +52,7 @@ Define whether you want to bootstrap your cluster with the `TEST` or the `PRODUC
   export CLUSTER_ENVIRONMENT=production
 ```
 
-Verify that your stagging cluster satisfies the prerequisites with:
+Verify that your staging cluster satisfies the prerequisites with:
 
 ```sh
   flux check --pre

@@ -17,28 +17,11 @@ if ($disks_to_adjust -ne $null) {
   }
 }
 
-# Redirect Docker files to new the disk
-Stop-Service -Name "docker" -Force -NoWait
-
-$dockerdataredirect = @'
-{
-    "data-root": "D:\\ProgramData\\Docker"
-}
-'@
-
-$daemon_file = "C:\ProgramData\docker\config\daemon.json"
-$directory = "D:\ProgramData\docker"
-New-Item $directory -ItemType Directory
-New-Item $daemon_file -ItemType File
-Add-Content $daemon_file $dockerdataredirect
-
-Start-Service -Name "docker"
-
 # Bootstrap and join the cluster
 [string]$EKSBinDir = "$env:ProgramFiles\Amazon\EKS"
 [string]$EKSBootstrapScriptName = 'Start-EKSBootstrap.ps1'
 [string]$EKSBootstrapScriptFile = "$EKSBinDir\$EKSBootstrapScriptName"
-& $EKSBootstrapScriptFile -EKSClusterName ${eks_cluster_id} -KubeletExtraArgs '${kubelet_extra_args}' 3>&1 4>&1 5>&1 6>&1
+& $EKSBootstrapScriptFile -EKSClusterName ${eks_cluster_id} ${bootstrap_extra_args} -KubeletExtraArgs '${kubelet_extra_args}' 3>&1 4>&1 5>&1 6>&1
 $LastError = if ($?) { 0 } else { $Error[0].Exception.HResult }
 
 ${post_userdata}

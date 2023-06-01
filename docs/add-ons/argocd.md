@@ -125,7 +125,7 @@ argocd_applications = {
     values              = {}
     type                = "helm"            # Optional, defaults to helm.
   }
-  kustomize_apps = {
+  kustomize-apps = {
     /*
       This points to a single application with no overlays, but it could easily
       point to a a specific overlay for an environment like "dev", and/or utilize
@@ -143,6 +143,13 @@ argocd_applications = {
     ssh_key_secret_name = "github-ssh-key"  # Needed for private repos
     values              = {}
     type                = "helm"            # Optional, defaults to helm.
+    #ignoreDifferences   = [ # Enable this to ignore children apps' sync policy
+    #  {
+    #    group        = "argoproj.io"
+    #    kind         = "Application"
+    #    jsonPointers = ["/spec/syncPolicy"]
+    #  }
+    #]
   }
 }
 ```

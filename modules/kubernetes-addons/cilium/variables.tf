@@ -24,3 +24,9 @@ variable "addon_context" {
     tags                           = map(string)
   })
 }
+
+variable "enable_wireguard" {
+  description = "Enable wireguard encryption"
+  type        = bool
+  default     = false
+}

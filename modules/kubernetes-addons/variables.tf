@@ -51,6 +51,12 @@ variable "eks_oidc_provider" {
   default     = null
 }
 
+variable "eks_oidc_provider_arn" {
+  description = "The OpenID Connect identity provider ARN"
+  type        = string
+  default     = null
+}
+
 variable "eks_cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
   type        = string
@@ -233,15 +239,17 @@ variable "crossplane_helm_config" {
 
 variable "crossplane_aws_provider" {
   description = "AWS Provider config for Crossplane"
-  type = object({
-    enable                   = bool
-    provider_aws_version     = string
-    additional_irsa_policies = list(string)
-  })
+  type        = any
   default = {
-    enable                   = false
-    provider_aws_version     = "v0.24.1"
-    additional_irsa_policies = []
+    enable = false
+  }
+}
+
+variable "crossplane_upbound_aws_provider" {
+  description = "AWS Upbound Provider config for Crossplane"
+  type        = any
+  default = {
+    enable = false
   }
 }
 
@@ -256,6 +264,22 @@ variable "crossplane_jet_aws_provider" {
     enable                   = false
     provider_aws_version     = "v0.24.1"
     additional_irsa_policies = []
+  }
+}
+
+variable "crossplane_kubernetes_provider" {
+  description = "Kubernetes Provider config for Crossplane"
+  type        = any
+  default = {
+    enable = false
+  }
+}
+
+variable "crossplane_helm_provider" {
+  description = "Helm Provider config for Crossplane"
+  type        = any
+  default = {
+    enable = false
   }
 }
 
@@ -411,6 +435,19 @@ variable "metrics_server_helm_config" {
   default     = {}
 }
 
+#---------KUBE STATE METRICS-----------
+variable "enable_kube_state_metrics" {
+  description = "Enable Kube State Metrics add-on"
+  type        = bool
+  default     = false
+}
+
+variable "kube_state_metrics_helm_config" {
+  description = "Kube State Metrics Helm Chart config"
+  type        = any
+  default     = {}
+}
+
 #-----------SYSDIG-------------
 variable "enable_sysdig_agent" {
   description = "Enable Sysdig Agent add-on"
@@ -489,6 +526,25 @@ variable "tetrate_istio_gateway_helm_config" {
   description = "Istio `gateway` Helm Chart config"
   type        = any
   default     = {}
+}
+
+#-----------THANOS-------------
+variable "enable_thanos" {
+  description = "Enable Thanos add-on"
+  type        = bool
+  default     = false
+}
+
+variable "thanos_helm_config" {
+  description = "Thanos Helm Chart config"
+  type        = any
+  default     = {}
+}
+
+variable "thanos_irsa_policies" {
+  description = "Additional IAM policies for a IAM role for service accounts"
+  type        = list(string)
+  default     = []
 }
 
 #-----------TRAEFIK-------------
@@ -855,6 +911,41 @@ variable "karpenter_node_iam_instance_profile" {
   default     = ""
 }
 
+variable "karpenter_enable_spot_termination_handling" {
+  description = "Determines whether to enable native spot termination handling"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_event_rule_name_prefix" {
+  description = "Prefix used for karpenter event bridge rules"
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = length(var.karpenter_event_rule_name_prefix) <= 14
+    error_message = "Maximum input length exceeded. Please enter no more than 14 characters."
+  }
+}
+
+variable "sqs_queue_managed_sse_enabled" {
+  description = "Enable server-side encryption (SSE) for a SQS queue"
+  type        = bool
+  default     = true
+}
+
+variable "sqs_queue_kms_master_key_id" {
+  description = "The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK"
+  type        = string
+  default     = null
+}
+
+variable "sqs_queue_kms_data_key_reuse_period_seconds" {
+  description = "The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again"
+  type        = number
+  default     = null
+}
+
 #-----------KEDA ADDON-------------
 variable "enable_keda" {
   description = "Enable KEDA Event-based autoscaler add-on"
@@ -1164,6 +1255,19 @@ variable "airflow_helm_config" {
   default     = {}
 }
 
+#-----Apache Kafka Strimzi Operator------
+variable "enable_strimzi_kafka_operator" {
+  description = "Enable Kafka add-on"
+  type        = bool
+  default     = false
+}
+
+variable "strimzi_kafka_operator_helm_config" {
+  description = "Kafka Strimzi Helm Chart config"
+  type        = any
+  default     = {}
+}
+
 #-----------Datadog Operator-------------
 variable "enable_datadog_operator" {
   description = "Enable Datadog Operator add-on"
@@ -1295,6 +1399,12 @@ variable "cilium_helm_config" {
 
 }
 
+variable "cilium_enable_wireguard" {
+  description = "Enable wireguard encryption"
+  type        = bool
+  default     = false
+}
+
 #-----------Gatekeeper ADDON-------------
 variable "enable_gatekeeper" {
   description = "Enable Gatekeeper add-on"
@@ -1352,4 +1462,30 @@ variable "enable_app_2048" {
   description = "Enable sample app 2048"
   type        = bool
   default     = false
+}
+
+#----------- EMR on EKS -----------------------
+variable "enable_emr_on_eks" {
+  description = "Enable EMR on EKS add-on"
+  type        = bool
+  default     = false
+}
+
+variable "emr_on_eks_config" {
+  description = "EMR on EKS Helm configuration values"
+  type        = any
+  default     = {}
+}
+
+#-----------Consul addon-----------------------
+variable "enable_consul" {
+  description = "Enable consul add-on"
+  type        = bool
+  default     = false
+}
+
+variable "consul_helm_config" {
+  description = "Consul Helm Chart config"
+  type        = any
+  default     = {}
 }
